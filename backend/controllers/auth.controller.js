@@ -1,4 +1,4 @@
-import User from "../models/User";
+import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
@@ -26,7 +26,7 @@ function sendTokenResponse(user, statusCode, res) {
         })
 }
 
-export default async function register(req, res) {
+export  async function register(req, res) {
     const { name, email, password } = req.body;
     const hashed = await bcrypt.hash(password, 10)
     let user = await User.findOne({ email });
@@ -40,16 +40,16 @@ export default async function register(req, res) {
     sendTokenResponse(user, 201, res)
 }
 
-export default async function login(req, res) {
+export  async function login(req, res) {
     const { email, password } = req.body;
-    const user = User.findOne({ email });
+    const user = await User.findOne({ email });
     if (!user || !(await bcrypt.compare(password, user.password))) {
         return res.status(401).json({ message: "creadentials not found" })
     }
     sendTokenResponse(user, 200, res);
 }
 
-export default async function getMe(req, res) {
+export  async function getMe(req, res) {
     const user = await User.findById(req.user.id);
     res.status(200).json({
         success: true,
