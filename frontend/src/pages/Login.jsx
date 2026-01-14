@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/AuthContext.jsx";
 
 export default function Login() {
   const { login, isAuthenticated, loading, error } = useAuth();
@@ -17,9 +17,12 @@ export default function Login() {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    try {
       await login({ email, password });
-      navigate("/");
-    
+      navigate("/"); 
+    } catch (err) {
+      console.error("Login failed:", err.message);
+    }
   }
 
   return (

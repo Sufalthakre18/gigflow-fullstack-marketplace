@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import API from "../utils/api";
+import API from "../utils/api.js";
 
 const AuthContext = createContext();
 
@@ -8,7 +8,6 @@ export function AuthProvider({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [message, setMessage] = useState(null);
 
   useEffect(() => {
     checkAuth();
@@ -16,10 +15,13 @@ export function AuthProvider({ children }) {
 
   async function checkAuth() {
     try {
-      const data = await API.get("/auth/me");
-      setUser(data.user);
-      setIsAuthenticated(true);
-    } catch {
+      const res = await API.get("/auth/me");
+      // res is the JSON body: { success: true, user: {...} }
+      if (res.success) {
+        setUser(res.user);
+        setIsAuthenticated(true);
+      }
+    } catch (err) {
       setUser(null);
       setIsAuthenticated(false);
     } finally {
@@ -31,14 +33,14 @@ export function AuthProvider({ children }) {
     setLoading(true);
     setError(null);
     try {
-      const data = await API.post("/auth/login", credentials);
-      setUser(data.user);
+      const res = await API.post("/auth/login", credentials);
+      // Postman showed res.user contains the info
+      setUser(res.user);
       setIsAuthenticated(true);
-      setMessage("Login successful");
-      return data;
+      return res; 
     } catch (err) {
-      setError(err.message);
-      throw err;
+      setError(err.message || "Login failed");
+      throw err; // Rethrow so the component can stop navigation
     } finally {
       setLoading(false);
     }
@@ -48,41 +50,34 @@ export function AuthProvider({ children }) {
     setLoading(true);
     setError(null);
     try {
-      const data = await API.post("/auth/register", userData);
-      setUser(data.user);
+      const res = await API.post("/auth/register", userData);
+      setUser(res.user);
       setIsAuthenticated(true);
-      setMessage("Registration successful");
-      return data;
+      return res;
+    } catch (err) {
+      setError(err.message || "Registration failed");
+      throw err;
     } finally {
       setLoading(false);
     }
   }
 
   async function logout() {
-    await API.post("/auth/logout");
-    setUser(null);
-    setIsAuthenticated(false);
-    setMessage("Logged out successfully");
+    try {
+      await API.post("/auth/logout");
+    } finally {
+      setUser(null);
+      setIsAuthenticated(false);
+    }
   }
 
   return (
     <AuthContext.Provider
-      value={{
-        user,
-        isAuthenticated,
-        loading,
-        error,
-        message,
-        login,
-        register,
-        logout,
-      }}
+      value={{ user, isAuthenticated, loading, error, login, register, logout }}
     >
       {children}
     </AuthContext.Provider>
   );
 }
 
-export function useAuth(){
-    return useContext(AuthContext);
-}
+export const useAuth = () => useContext(AuthContext);

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/AuthContext.jsx";
 
 export default function Register() {
     const { register, isAuthenticated, loading, error } = useAuth();
@@ -16,12 +16,15 @@ export default function Register() {
         }
     }, [isAuthenticated, navigate]);
 
-    async function handleSubmit(e) {
-        e.preventDefault();
-        await register({ name, email, password });
-        navigate("/");
-
+   async function handleSubmit(e) {
+    e.preventDefault();
+    try {
+      await register({ name, email, password });
+      navigate("/");
+    } catch (err) {
+      console.error("Registration failed:", err.message);
     }
+  }
 
     return (
         <div className="min-h-screen flex items-center justify-center">

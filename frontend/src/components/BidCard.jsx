@@ -1,6 +1,6 @@
-import { IndianRupeeIcon, User, CheckCir, IndianRupeeIconcle, XCircle } from "lucide-react";
+import { IndianRupeeIcon, User, CheckCircle, XCircle } from "lucide-react";
 
-export default function BidCard({ bid,isOwner, onHire  }) {
+export default function BidCard({ bid, isOwner, onHire }) {
   const statusColor = {
     pending: "text-yellow-600",
     hired: "text-green-600",
@@ -43,7 +43,7 @@ export default function BidCard({ bid,isOwner, onHire  }) {
 
       {bid.status === "hired" && (
         <div className="flex items-center gap-2 text-green-600 font-medium">
-          <CheckCir size={18} /> Hired
+          <CheckCircle size={18} /> Hired
         </div>
       )}
 

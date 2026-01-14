@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from "react";
-import API from "../utils/api";
+import API from "../utils/api.js";
 
 const GigContext = createContext();
 
@@ -12,65 +12,66 @@ export function GigProvider({ children }) {
   const [message, setMessage] = useState(null);
 
   async function getGigs(searchQuery = "") {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await API.get(`/gigs?search=${searchQuery}`);
-      setGigs(data.data);
-      return data;
-    } catch (err) {
-      setError(err.message || "Failed to fetch gigs");
-      throw err;
-    } finally {
-      setLoading(false);
-    }
+  setLoading(true);
+  setError(null);
+  try {
+    const data = await API.get(`/gigs?search=${searchQuery}`);
+    setGigs(data.gigs || []); 
+    return data;
+  } catch (err) {
+    setError(err.message || "Failed to fetch gigs");
+    throw err;
+  } finally {
+    setLoading(false);
   }
+}
 
-  async function getGig(gigId) {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await API.get(`/gigs/${gigId}`);
-      setCurrentGig(data.data);
-      return data;
-    } catch (err) {
-      setError(err.message || "Failed to fetch gig");
-      throw err;
-    } finally {
-      setLoading(false);
-    }
+async function getGig(gigId) {
+  setLoading(true);
+  setError(null);
+  try {
+    const data = await API.get(`/gigs/${gigId}`);
+    setCurrentGig(data.gig); 
+    return data;
+  } catch (err) {
+    setError(err.message || "Failed to fetch gig");
+    throw err;
+  } finally {
+    setLoading(false);
   }
+}
 
-  async function createGig(gigData) {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await API.post("/gigs", gigData);
-      setGigs(prev => [data.data, ...prev]);
-      setMessage("Gig created successfully");
-      return data;
-    } catch (err) {
-      setError(err.message || "Failed to create gig");
-      throw err;
-    } finally {
-      setLoading(false);
-    }
+async function createGig(gigData) {
+  setLoading(true);
+  setError(null);
+  try {
+    const res = await API.post("/gigs", gigData);
+    const newGig = res.data; 
+    setGigs(prev => [newGig, ...(prev || [])]);
+    setMyGigs(prev => [newGig, ...(prev || [])]);
+    setMessage("Gig created successfully");
+    return res;
+  } catch (err) {
+    setError(err.response?.data?.message || "Failed to create gig");
+    throw err;
+  } finally {
+    setLoading(false);
   }
+}
 
-  async function getMyGigs() {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await API.get("/gigs/my-gigs");
-      setMyGigs(data.data);
-      return data;
-    } catch (err) {
-      setError(err.message || "Failed to fetch your gigs");
-      throw err;
-    } finally {
-      setLoading(false);
-    }
+async function getMyGigs() {
+  setLoading(true);
+  setError(null);
+  try {
+    const data = await API.get("/gigs/my");  
+    setMyGigs(data.gigs || []); 
+  } catch (err) {
+    setError(err.message || "Failed to fetch your gigs");
+    throw err;
+  } finally {
+    setLoading(false);
   }
+}
 
   async function deleteGig(gigId) {
     setLoading(true);

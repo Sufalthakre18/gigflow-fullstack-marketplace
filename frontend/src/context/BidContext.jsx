@@ -1,5 +1,5 @@
-import { createContext, useContext, useState } from "react";
-import API from "../utils/api";
+import { createContext, useContext, useState } from 'react';
+import API from '../utils/api.js';
 
 const BidContext = createContext();
 
@@ -8,18 +8,17 @@ export function BidProvider({ children }) {
   const [myBids, setMyBids] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [message, setMessage] = useState(null);
 
+  // Create bid
   async function createBid(bidData) {
-    setLoading(true);
-    setError(null);
     try {
-      const data = await API.post("/bids", bidData);
-      setBids(prev => [...prev, data.data]);
-      setMessage("Bid submitted successfully");
-      return data;
+      setLoading(true);
+      setError(null);
+      const res = await API.post('/bids', bidData);
+      setBids([...bids, res.data]);
+      return res;
     } catch (err) {
-      setError(err.message || "Failed to submit bid");
+      setError(err.message || 'Failed to submit bid');
       throw err;
     } finally {
       setLoading(false);
@@ -27,57 +26,57 @@ export function BidProvider({ children }) {
   }
 
   async function getBidsForGig(gigId) {
-    setLoading(true);
-    setError(null);
     try {
-      const data = await API.get(`/bids/${gigId}`);
-      setBids(data.data);
-      return data;
+      setLoading(true);
+      setError(null);
+      const res = await API.get(`/bids/${gigId}`);
+      setBids(res.data.data || []);
+      return res;
     } catch (err) {
-      setError(err.message || "Failed to fetch bids");
+      setError(err.message || 'Failed to fetch bids');
+      setBids([]);
       throw err;
     } finally {
       setLoading(false);
     }
   }
 
+  // Get my bidS
   async function getMyBids() {
-    setLoading(true);
-    setError(null);
     try {
-      const data = await API.get("/bids/my-bids");
-      setMyBids(data.data);
-      return data;
+      setLoading(true);
+      setError(null);
+      const res = await API.get('/bids/my-bids');
+      setMyBids(res.data || []);
+      return res;
     } catch (err) {
-      setError(err.message || "Failed to fetch your bids");
+      setError(err.message || 'Failed to fetch your bids');
+      setMyBids([]);
       throw err;
-    } finally {
+    }
+    finally {
       setLoading(false);
     }
   }
 
+  // Hire bid 
   async function hireBid(bidId) {
-    setLoading(true);
-    setError(null);
     try {
-      const data = await API.patch(`/bids/${bidId}/hire`);
+      setLoading(true);
+      setError(null);
+      const res = await API.patch(`/bids/${bidId}/hire`);
+      setBids(bids.map(bid => {
+        if (bid._id === bidId) {
+          return { ...bid, status: 'hired' };
+        } else if (bid.status === 'pending') {
+          return { ...bid, status: 'rejected' };
+        }
+        return bid;
+      }));
 
-      setBids(prev =>
-        prev.map(bid => {
-          if (bid._id === bidId) {
-            return { ...bid, status: "hired" };
-          }
-          if (bid.status === "pending") {
-            return { ...bid, status: "rejected" };
-          }
-          return bid;
-        })
-      );
-
-      setMessage("Freelancer hired successfully");
-      return data;
+      return res;
     } catch (err) {
-      setError(err.message || "Failed to hire freelancer");
+      setError(err.message || 'Failed to hire freelancer');
       throw err;
     } finally {
       setLoading(false);
@@ -85,45 +84,40 @@ export function BidProvider({ children }) {
   }
 
   async function deleteBid(bidId) {
-    setLoading(true);
-    setError(null);
     try {
       await API.delete(`/bids/${bidId}`);
-      setMyBids(prev => prev.filter(bid => bid._id !== bidId));
-      setMessage("Bid deleted successfully");
+      setMyBids(myBids.filter(bid => bid._id !== bidId));
     } catch (err) {
-      setError(err.message || "Failed to delete bid");
+      setError(err.message || 'Failed to delete bid');
       throw err;
-    } finally {
-      setLoading(false);
     }
   }
 
   function clearBids() {
     setBids([]);
   }
+  function clearError() {
+    setError(null);
+  }
 
-  return (
-    <BidContext.Provider
-      value={{
-        bids,
-        myBids,
-        loading,
-        error,
-        message,
-        createBid,
-        getBidsForGig,
-        getMyBids,
-        hireBid,
-        deleteBid,
-        clearBids,
-      }}
-    >
-      {children}
-    </BidContext.Provider>
-  );
+
+  const value = {
+    bids,
+    myBids,
+    loading,
+    error,
+    createBid,
+    getBidsForGig,
+    getMyBids,
+    hireBid,
+    deleteBid,
+    clearBids,
+    clearError,
+  };
+
+  return <BidContext.Provider value={value}>{children}</BidContext.Provider>;
 }
 
-export function useBid(){
-    return useContext(BidContext);
+export function useBid() {
+  return useContext(BidContext);
 }

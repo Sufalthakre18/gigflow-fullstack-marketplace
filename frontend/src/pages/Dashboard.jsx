@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useGig } from '../context/GigContext';
-import { useBid } from '../context/BidContext';
-import { useAuth } from '../context/AuthContext';
+import { useGig } from '../context/GigContext.jsx';
+import { useBid } from '../context/BidContext.jsx';
+import { useAuth } from '../context/AuthContext.jsx';
 import { Briefcase, Send, User } from 'lucide-react';
 
 export default function Dashboard(){

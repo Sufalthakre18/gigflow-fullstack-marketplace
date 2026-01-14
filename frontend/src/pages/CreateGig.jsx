@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useGig } from "../context/GigContext";
+import { useGig } from "../context/GigContext.jsx";
 
 export default function CreateGig() {
     const navigate = useNavigate();

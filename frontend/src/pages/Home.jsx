@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useGig } from '../context/GigContext';
-import GigCard from '../components/GigCard';
+import { useGig } from '../context/GigContext.jsx';
+import GigCard from '../components/GigCard.jsx';
 import { Search } from 'lucide-react';
 
 export default function Home() {
-  const { gigs, loading, getGigs, error } = useGig();
+  const { gigs= [], loading, getGigs, error } = useGig();
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
@@ -17,7 +17,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-400">
     
       <div className="bg-primary-600 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

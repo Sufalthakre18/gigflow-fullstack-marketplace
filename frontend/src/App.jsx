@@ -9,6 +9,7 @@ import Register from './pages/Register.jsx';
 import GigDetails from './pages/GigDetails.jsx';
 import CreateGig from './pages/CreateGig.jsx';
 import Dashboard from './pages/Dashboard.jsx';
+import ProtectedRoute from './components/PrivateRoute.jsx';
 
 function App() {
 
@@ -17,7 +18,7 @@ function App() {
       <AuthProvider>
         <GigProvider>
           <BidProvider>
-            <div className="min-h-screen bg-gray-50">
+            <div className="min-h-screen ">
               <Navbar />
               <Routes>
                 <Route path="/" element={<Home />} />
@@ -26,14 +27,14 @@ function App() {
                 <Route path="/gigs/:id" element={<GigDetails />} />
 
                 <Route path="/create-gig" element={
-                    <PrivateRoute>
+                    <ProtectedRoute>
                       <CreateGig />
-                    </PrivateRoute>
+                    </ProtectedRoute>
                   }/>
                 <Route path="/dashboard" element={
-                    <PrivateRoute>
+                    <ProtectedRoute>
                       <Dashboard />
-                    </PrivateRoute>
+                    </ProtectedRoute>
                   }/>
                 
               </Routes>

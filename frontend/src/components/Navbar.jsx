@@ -1,6 +1,6 @@
 
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/AuthContext.jsx';
 import { Briefcase, LogOut, User, Plus, Home } from 'lucide-react';
 
 export function Navbar() {

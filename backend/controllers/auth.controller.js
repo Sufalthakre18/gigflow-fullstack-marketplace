@@ -15,7 +15,8 @@ function sendTokenResponse(user, statusCode, res) {
     return res.status(statusCode).cookie('token', token, {
         expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // 3 day
         httpOnly: true,
-        sameSite: 'strict'
+        sameSite: 'none',
+        secure:true
     })
         .json({
             success: true,
@@ -43,8 +44,9 @@ export async function register(req, res) {
 export async function login(req, res) {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
+    
     if (!user || !(await bcrypt.compare(password, user.password))) {
-        return res.status(401).json({ message: "creadentials not found" })
+        return res.status(401).json({ message: "Invalid credentials" });
     }
     sendTokenResponse(user, 200, res);
 }
@@ -62,7 +64,7 @@ export async function getMe(req, res) {
 }
 
 export async function logout(req, res) {
-    req.cookie('token', 'none', {
+    res.cookie('token', 'none', {
         expires: new Date(Date.now() + 10 * 1000),
         httpOnly: true
     });
