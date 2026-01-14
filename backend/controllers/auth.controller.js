@@ -26,7 +26,7 @@ function sendTokenResponse(user, statusCode, res) {
         })
 }
 
-export  async function register(req, res) {
+export async function register(req, res) {
     const { name, email, password } = req.body;
     const hashed = await bcrypt.hash(password, 10)
     let user = await User.findOne({ email });
@@ -40,7 +40,7 @@ export  async function register(req, res) {
     sendTokenResponse(user, 201, res)
 }
 
-export  async function login(req, res) {
+export async function login(req, res) {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
     if (!user || !(await bcrypt.compare(password, user.password))) {
@@ -49,7 +49,7 @@ export  async function login(req, res) {
     sendTokenResponse(user, 200, res);
 }
 
-export  async function getMe(req, res) {
+export async function getMe(req, res) {
     const user = await User.findById(req.user.id);
     res.status(200).json({
         success: true,
@@ -59,4 +59,16 @@ export  async function getMe(req, res) {
             email: user.email
         }
     })
+}
+
+export async function logout(req, res) {
+    req.cookie('token', 'none', {
+        expires: new Date(Date.now() + 10 * 1000),
+        httpOnly: true
+    });
+
+    res.status(200).json({
+        success: true,
+        message: 'Logged out successfully'
+    });
 }
