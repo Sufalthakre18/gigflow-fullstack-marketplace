@@ -12,7 +12,9 @@ export async function getGigs(req, res) {
             query.title = { $regex: search, $options: "i" };
         }
 
-        const gigs = await Gig.find(query).sort({ createdAt: -1 });
+        const gigs = await Gig.find(query)
+        .populate("ownerId", "name email")
+        .sort({ createdAt: -1 });
 
         res.status(200).json({
             success: true,
@@ -25,7 +27,7 @@ export async function getGigs(req, res) {
 }
 export async function getGig(req, res) {
     try {
-        const gig = await Gig.findById(req.params.id);
+        const gig = await Gig.findById(req.params.id).populate("ownerId", "name email");
 
         if (!gig) {
             return res.status(404).json({
@@ -49,7 +51,8 @@ export async function createGig(req, res) {
             title,
             description,
             budget,
-            ownerId: req.user.id
+            ownerId: req.user.id,
+            
         });
         res.status(201).json({
             success: true,

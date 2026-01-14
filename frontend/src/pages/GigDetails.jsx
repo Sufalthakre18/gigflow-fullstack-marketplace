@@ -18,7 +18,13 @@ export default function GigDetails() {
     const [bidData, setBidData] = useState({ message: "", price: "" });
     const [bidSuccess, setBidSuccess] = useState(false);
 
-    const isOwner = currentGig && user && String(currentGig.ownerId) === String(user.id);
+    const isOwner =
+        currentGig &&
+        user &&
+        String(currentGig.ownerId?._id) === String(user.id);
+console.log("IS OWNER:", isOwner);
+console.log("GIG OWNER:", currentGig?.ownerId?._id);
+console.log("USER ID:", user?.id);
 
     useEffect(() => {
         getGig(id);
@@ -30,12 +36,15 @@ export default function GigDetails() {
 
     useEffect(() => {
         if (!currentGig || !user) return;
+
         const owner =
-            String(currentGig.ownerId) === String(user.id);
+            String(currentGig.ownerId?._id) === String(user.id);
+
         if (owner) {
             getBidsForGig(id);
         }
     }, [currentGig, user, id]);
+
 
 
     async function handleBidSubmit(e) {
@@ -92,14 +101,18 @@ export default function GigDetails() {
 
                     <div className="flex gap-6 text-gray-700 mb-4">
                         <span className="flex items-center gap-1">
-                            <IndianRupeeIcon size={16} /> ${currentGig.budget}
+                            <IndianRupeeIcon size={16} /> {currentGig.budget}
                         </span>
                         <span className="flex items-center gap-1">
                             <User size={16} /> {currentGig.ownerId?.name}
                         </span>
                         <span className="flex items-center gap-1">
                             <Calendar size={16} />
-                            {new Date(currentGig.createdAt).toLocaleDateString()}
+                            {new Date(currentGig.createdAt).toLocaleDateString('en-IN', {
+                                day: 'numeric',
+                                month: 'short',
+                                year: 'numeric',
+                            })}
                         </span>
                     </div>
 

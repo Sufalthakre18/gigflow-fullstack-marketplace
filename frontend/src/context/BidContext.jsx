@@ -30,7 +30,7 @@ export function BidProvider({ children }) {
       setLoading(true);
       setError(null);
       const res = await API.get(`/bids/${gigId}`);
-      setBids(res.data.data || []);
+      setBids(res.data || []);
       return res;
     } catch (err) {
       setError(err.message || 'Failed to fetch bids');
