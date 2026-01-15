@@ -30,7 +30,7 @@ export default function Home() {
             </p>
 
             {/* Search Bar */}
-            <form onSubmit={handleSearch} className="max-w-2xl mx-auto">
+            <form onSubmit={handleSearch} className="border border-gray-300 rounded-lg max-w-2xl mx-auto">
               <div className="flex">
                 <input
                   type="text"

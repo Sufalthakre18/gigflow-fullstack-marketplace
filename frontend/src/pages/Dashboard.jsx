@@ -4,6 +4,8 @@ import { useGig } from '../context/GigContext.jsx';
 import { useBid } from '../context/BidContext.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import { Briefcase, Send, User } from 'lucide-react';
+import socket from "../socket.js";
+
 
 export default function Dashboard() {
     const { myGigs, loading: gigsLoading, error: gigsError, getMyGigs, deleteGig } = useGig();
@@ -14,6 +16,18 @@ export default function Dashboard() {
         getMyGigs();
         getMyBids();
     }, []);
+
+    useEffect(() => {
+        socket.on("hired", (data) => {
+            alert(`You have been hired for ${data.gigTitle}! 🎉`);
+            getMyBids(); 
+        });
+
+        return () => {
+            socket.off("hired");
+        };
+    }, []);
+
 
     function getStatusColor(status) {
         switch (status) {

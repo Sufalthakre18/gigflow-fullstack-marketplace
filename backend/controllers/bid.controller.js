@@ -1,6 +1,7 @@
 import Bid from "../models/Bid.js";
 import Gig from "../models/Gig.js";
 import mongoose from "mongoose";
+import { io } from "../server.js";
 
 export async function createBid(req, res) {
     try {
@@ -147,6 +148,11 @@ export async function hireBid(req, res) {
 
         await session.commitTransaction();
         session.endSession();
+
+        io.to(bid.freelancerId.toString()).emit("hired", {
+            gigTitle: gig.title,
+            gigId: gig._id,
+        });
 
         const updatedBid = await Bid.findById(bidId)
             .populate('freelancerId', 'name email')

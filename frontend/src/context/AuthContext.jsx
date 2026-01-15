@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import API from "../utils/api.js";
+import socket from "../socket.js";
 
 const AuthContext = createContext();
 
@@ -16,10 +17,11 @@ export function AuthProvider({ children }) {
   async function checkAuth() {
     try {
       const res = await API.get("/auth/me");
-      // res is the JSON body: { success: true, user: {...} }
       if (res.success) {
         setUser(res.user);
         setIsAuthenticated(true);
+        socket.connect();
+        socket.emit("join", res.user.id);
       }
     } catch (err) {
       setUser(null);
@@ -34,13 +36,14 @@ export function AuthProvider({ children }) {
     setError(null);
     try {
       const res = await API.post("/auth/login", credentials);
-      // Postman showed res.user contains the info
       setUser(res.user);
       setIsAuthenticated(true);
-      return res; 
+      socket.connect();
+      socket.emit("join", res.user.id);
+      return res;
     } catch (err) {
       setError(err.message || "Login failed");
-      throw err; // Rethrow so the component can stop navigation
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -66,6 +69,7 @@ export function AuthProvider({ children }) {
     try {
       await API.post("/auth/logout");
     } finally {
+      socket.disconnect(); 
       setUser(null);
       setIsAuthenticated(false);
     }
