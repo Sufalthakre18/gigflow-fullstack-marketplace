@@ -22,9 +22,6 @@ export default function GigDetails() {
         currentGig &&
         user &&
         String(currentGig.ownerId?._id) === String(user.id);
-console.log("IS OWNER:", isOwner);
-console.log("GIG OWNER:", currentGig?.ownerId?._id);
-console.log("USER ID:", user?.id);
 
     useEffect(() => {
         getGig(id);
@@ -138,11 +135,7 @@ console.log("USER ID:", user?.id);
                             <MessageSquare size={18} /> Submit Bid
                         </h2>
 
-                        {bidError && (
-                            <div className="bg-red-100 text-red-700 p-3 rounded-lg mb-4">
-                                ❌ {bidError}
-                            </div>
-                        )}
+                        
 
                         <form onSubmit={handleBidSubmit} className="space-y-4">
                             <textarea

@@ -110,7 +110,7 @@ export default function Dashboard() {
 
                                         <div className="flex justify-between items-center">
                                             <span className="text-green-600 font-semibold">
-                                                ${gig.budget}
+                                                ₹{gig.budget}
                                             </span>
                                             <Link
                                                 to={`/gigs/${gig._id}`}
