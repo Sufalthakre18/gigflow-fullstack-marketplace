@@ -9,7 +9,7 @@ A full-stack freelance marketplace where clients can post gigs and freelancers c
 
 ## 🎥 Project Demo (YouTube)
 
-[Demo Video](https://youtu.be/vCuG7OR1dqE?si=Zm_OeqQlEcnzAMvU)
+[![GigFlow Demo Video](screenshot.png)](https://youtu.be/vCuG7OR1dqE?si=Zm_OeqQlEcnzAMvU)
 
 
 
