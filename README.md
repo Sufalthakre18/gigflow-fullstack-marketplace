@@ -157,4 +157,4 @@ This is an assignment project, but feedback and suggestions are welcome!
 
 **Built with ❤️ **
 
-[Home Page](screenshot.png)
+[!Home Page](screenshot.png)
